@@ -13,7 +13,13 @@ const App = () => {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    setPersons([...persons, {name: newName}]);
+    const checkDup = persons.find(person => person.name === newName);
+    console.log(checkDup);
+    if(checkDup){
+      alert(`${newName} is already added to phonebook.`)
+    } else{
+      setPersons([...persons, {name: newName}]);
+    }
     console.log(persons)
   }
 
@@ -29,7 +35,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person, index) => <p key={index}>{person.name}</p>)}
+      {persons.map((person, index) => <p key={person.name}>{person.name}</p>)}
     </div>
   )
 } 
