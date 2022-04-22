@@ -48,7 +48,10 @@ const App = () => {
     if (checkDup) {
       alert(`${newName} is already added to phonebook.`);
     } else {
-      setPersons([...persons, { name: newName, number: newNumber }]);
+      const newPerson = { name: newName, number: newNumber };
+      personService
+        .create(newPerson)
+        .then((res) => setPersons([...persons, res.data]));
     }
     console.log(persons);
   };
