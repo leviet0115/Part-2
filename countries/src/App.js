@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Results from "./Results";
+import Results from "./Components/Results";
 
 const App = () => {
   const [keyword, setKeyword] = useState("");
   const [countries, setCountries] = useState([]);
+  const [view, setView] = useState([]);
+  const handleShow = (e) => {
+    setView(e.target.id);
+  };
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((res) => {
