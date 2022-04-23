@@ -11,10 +11,7 @@ const App = () => {
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
-    personService.getAll().then((res) => {
-      console.log(res.data);
-      setPersons(res.data);
-    });
+    personService.getAll().then((data) => setPersons(data));
   }, []);
 
   const contactToShow =
@@ -51,9 +48,21 @@ const App = () => {
       const newPerson = { name: newName, number: newNumber };
       personService
         .create(newPerson)
-        .then((res) => setPersons([...persons, res.data]));
+        .then((data) => setPersons([...persons, data]));
     }
     console.log(persons);
+  };
+
+  const handleDel = (e) => {
+    const id = e.target.id;
+    const name = e.target.value;
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .remove(id)
+        .then(() =>
+          setPersons(persons.filter((person) => person.id !== Number(id)))
+        );
+    }
   };
 
   return (
@@ -69,7 +78,7 @@ const App = () => {
         handleNumber={handleNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={contactToShow} />
+      <Persons persons={contactToShow} handleDel={handleDel} />
     </div>
   );
 };
