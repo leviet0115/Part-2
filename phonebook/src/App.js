@@ -11,7 +11,10 @@ const App = () => {
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
-    personService.getAll().then((data) => setPersons(data));
+    personService
+      .getAll()
+      .then((data) => setPersons(data))
+      .catch((err) => alert(`failure: ${err}`));
   }, []);
 
   const contactToShow =
@@ -53,13 +56,15 @@ const App = () => {
                 person.id === checkDup.id ? data : person
               )
             )
-          );
+          )
+          .catch((err) => alert(`failure: ${err}`));
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
       personService
         .create(newPerson)
-        .then((data) => setPersons([...persons, data]));
+        .then((data) => setPersons([...persons, data]))
+        .catch((err) => alert(`failure: ${err}`));
     }
   };
 
@@ -71,7 +76,8 @@ const App = () => {
         .remove(id)
         .then(() =>
           setPersons(persons.filter((person) => person.id !== Number(id)))
-        );
+        )
+        .catch((err) => alert(`failure: ${err}`));
     }
   };
 
