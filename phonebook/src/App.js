@@ -40,17 +40,27 @@ const App = () => {
     e.preventDefault();
 
     const checkDup = persons.find((person) => person.name === newName);
-    console.log(checkDup);
 
     if (checkDup) {
-      alert(`${newName} is already added to phonebook.`);
+      const msg = `${newName} is already added to phonebook, replace the old number with a new one?`;
+      if (window.confirm(msg)) {
+        console.log(checkDup, newNumber);
+        personService
+          .update(checkDup.id, { ...checkDup, number: newNumber })
+          .then((data) =>
+            setPersons(
+              persons.map((person) =>
+                person.id === checkDup.id ? data : person
+              )
+            )
+          );
+      }
     } else {
       const newPerson = { name: newName, number: newNumber };
       personService
         .create(newPerson)
         .then((data) => setPersons([...persons, data]));
     }
-    console.log(persons);
   };
 
   const handleDel = (e) => {
