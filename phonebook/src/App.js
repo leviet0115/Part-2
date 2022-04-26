@@ -3,12 +3,14 @@ import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     personService
@@ -50,20 +52,44 @@ const App = () => {
         console.log(checkDup, newNumber);
         personService
           .update(checkDup.id, { ...checkDup, number: newNumber })
-          .then((data) =>
+          .then((data) => {
             setPersons(
               persons.map((person) =>
                 person.id === checkDup.id ? data : person
               )
-            )
-          )
-          .catch((err) => alert(`failure: ${err}`));
+            );
+          })
+          .then(() => {
+            setMsg({ msg: `Updated ${newName}!`, type: "success" });
+            setTimeout(() => {
+              setMsg(null);
+            }, 5000);
+          })
+          .catch((err) => {
+            console.log(`failure: ${err}`);
+            setMsg({
+              msg: `${newName} has already been removed from the server!`,
+              type: "error",
+            });
+            setTimeout(() => {
+              setMsg(null);
+            }, 5000);
+            setPersons(
+              persons.filter((person) => person.id !== Number(checkDup.id))
+            );
+          });
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
       personService
         .create(newPerson)
         .then((data) => setPersons([...persons, data]))
+        .then(() => {
+          setMsg({ msg: `Added ${newName}!`, type: "success" });
+          setTimeout(() => {
+            setMsg(null);
+          }, 5000);
+        })
         .catch((err) => alert(`failure: ${err}`));
     }
   };
@@ -74,16 +100,23 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       personService
         .remove(id)
-        .then(() =>
-          setPersons(persons.filter((person) => person.id !== Number(id)))
-        )
-        .catch((err) => alert(`failure: ${err}`));
+        .then(() => {})
+        .then(() => {
+          setMsg({ msg: `Deleted ${name}!`, type: "success" });
+          setTimeout(() => {
+            setMsg(null);
+          }, 5000);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={msg} />
       <Filter keyword={keyword} handleKeyword={handleKeyword} />
       <h2>Add a new contact</h2>
       <PersonForm
