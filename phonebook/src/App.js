@@ -26,19 +26,23 @@ const App = () => {
           person.name.toLowerCase().includes(keyword.toLowerCase())
         );
 
+  const createMsg = (msg, type) => {
+    setMsg({ msg, type });
+    setTimeout(() => {
+      setMsg(null);
+    }, 5000);
+  };
+
   const handleName = (e) => {
     setNewName(e.target.value);
-    console.log(newName);
   };
 
   const handleNumber = (e) => {
     setNewNumber(e.target.value);
-    console.log(newNumber);
   };
 
   const handleKeyword = (e) => {
     setKeyword(e.target.value);
-    console.log(keyword);
   };
 
   const handleAdd = (e) => {
@@ -60,20 +64,14 @@ const App = () => {
             );
           })
           .then(() => {
-            setMsg({ msg: `Updated ${newName}!`, type: "success" });
-            setTimeout(() => {
-              setMsg(null);
-            }, 5000);
+            createMsg(`Updated ${newName}!`, "success");
           })
           .catch((err) => {
-            console.log(`failure: ${err}`);
-            setMsg({
-              msg: `${newName} has already been removed from the server!`,
-              type: "error",
-            });
-            setTimeout(() => {
-              setMsg(null);
-            }, 5000);
+            console.log(err);
+            createMsg(
+              `${newName} has already been removed from the server!`,
+              "error"
+            );
             setPersons(
               persons.filter((person) => person.id !== Number(checkDup.id))
             );
@@ -84,13 +82,8 @@ const App = () => {
       personService
         .create(newPerson)
         .then((data) => setPersons([...persons, data]))
-        .then(() => {
-          setMsg({ msg: `Added ${newName}!`, type: "success" });
-          setTimeout(() => {
-            setMsg(null);
-          }, 5000);
-        })
-        .catch((err) => alert(`failure: ${err}`));
+        .then(() => createMsg(`Added ${newName}!`, "success"))
+        .catch((err) => console.log(`failure: ${err}`));
     }
   };
 
@@ -102,14 +95,9 @@ const App = () => {
         .remove(id)
         .then(() => {})
         .then(() => {
-          setMsg({ msg: `Deleted ${name}!`, type: "success" });
-          setTimeout(() => {
-            setMsg(null);
-          }, 5000);
+          createMsg(`Deleted ${name}!`, "success");
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => console.log(err));
     }
   };
 
